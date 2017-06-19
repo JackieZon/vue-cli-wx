@@ -2,7 +2,7 @@
   <div id="app">
     <img src="./assets/logo.png">
     <hr></hr>
-    <div class="intro">Essential Links</div>
+    <div class="intro">{{msg}}</div>
     <Footer></Footer>
   </div>
 </template>
