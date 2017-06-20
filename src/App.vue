@@ -1,14 +1,13 @@
 <template>
-  <div id="app">
-    <img src="./assets/logo.png">
-    <hr></hr>
-    <div class="intro">{{msg}}</div>
-    <Footer></Footer>
+  <div class="app">
+    <!--<img src="./assets/logo.png">-->
+    <router-view></router-view>
+    <Footers></Footers>
   </div>
 </template>
 
 <script>
-  import Footer from './components/Footer.vue'
+  import Footers from './components/Footer.vue'
   export default {
     name: 'app',
     data () {
@@ -17,13 +16,13 @@
       }
     },
     components:{
-      Footer
+      Footers
     }
   }
 </script>
 
 <style lang="scss">
-  #app {
+  .app {
     height: 100%;
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;

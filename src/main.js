@@ -1,12 +1,29 @@
 import Vue from 'vue'
-import App from './App.vue'
 import YDUI from 'vue-ydui'
-// import 'vue-ydui/dist/ydui.rem.css'
-// import 'vue-ydui/dist/ydui.base.css'
+import VueRouter from 'vue-router'
+import App from './App.vue'
+import Home from './pages/Home.vue'
+import News from './pages/News.vue'
+import My from './pages/My.vue'
+import routerConfig from './routerConfig.js'
+// import oAuth from './../utils/weixin.js'
 
-Vue.use(YDUI);
+// oAuth();
 
-new Vue({
-  el: '#app',
-  render: h => h(App)
+Vue.use(YDUI)
+Vue.use(VueRouter)
+
+const router = new VueRouter({
+  routes: routerConfig
 })
+
+router.push({ path: '/app/home' })
+
+const app = new Vue({
+  router
+}).$mount('#app')
+
+// new Vue({
+//   el: '#app',
+//   render: h => h(App)
+// })
