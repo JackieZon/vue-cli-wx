@@ -21,7 +21,7 @@
     export default {
         data(){
             return {
-                tabState:0,
+                tabState:2,
                 tabData:[0,1,2],
             }
         },

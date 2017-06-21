@@ -5,7 +5,7 @@ import App from './App.vue'
 import Home from './pages/Home.vue'
 import News from './pages/News.vue'
 import My from './pages/My.vue'
-import routerConfig from './routerConfig.js'
+import routes from './routerConfig.js'
 // import oAuth from './../utils/weixin.js'
 
 // oAuth();
@@ -14,10 +14,10 @@ Vue.use(YDUI)
 Vue.use(VueRouter)
 
 const router = new VueRouter({
-  routes: routerConfig
+  routes
 })
 
-router.push({ path: '/app/home' })
+router.push({ path: '/app/my' })
 
 const app = new Vue({
   router
