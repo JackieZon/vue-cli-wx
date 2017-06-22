@@ -15,6 +15,11 @@
         msg: 'Welcome to Your Vue.js App'
       }
     },
+    created(){
+
+      console.log('App.vue 文件初始化');
+
+    },
     components:{
       Footers
     }
