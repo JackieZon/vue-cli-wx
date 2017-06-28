@@ -7,15 +7,14 @@ import News from './pages/News.vue'
 import My from './pages/My.vue'
 import routes from './routerConfig.js'
 // import { AlertPlugin, ToastPlugin } from 'vux'
-// import oAuth from './../utils/weixin.js'
 
-// oAuth();
+import {oAuth,wxInit} from './../utils/weixin.js'
+
+oAuth();
+wxInit();
 
 Vue.use(YDUI)
 Vue.use(VueRouter)
-
-// Vue.use(AlertPlugin)
-// Vue.use(ToastPlugin)
 
 const router = new VueRouter({
   routes

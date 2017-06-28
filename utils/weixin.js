@@ -1,5 +1,5 @@
-// import request from './request';
-// import qs from 'qs';
+import request from './fetch.js';
+import qs from 'qs';
 
 import { apiUrl, baseUrl, appId } from './config';
 
@@ -58,16 +58,17 @@ export function oAuth() {
     }
     else {
 
-      const res = request(`${baseUrl}/Weixin/wx_Oauto?oAuth_Code=${code}&oAuth_State=${state}`);
+      const res = request(`/Weixin/wx_Oauto?oAuth_Code=${code}&oAuth_State=${state}`);
       res.then(v => {
 
         console.log('res-----' + JSON.stringify(v));
-        alert(JSON.stringify(v));
+        localStorage.serverUrl = JSON.stringify(v);
+        // alert('openId 是：'+ v.openid);
 
-        sessionStorage.setItem('key', v.key);
-        sessionStorage.setItem('memberId', v.id);
-        sessionStorage.setItem('openId', v.openid);
-        sessionStorage.setItem('phone', v.tel);
+        sessionStorage.setItem('key', v.info.key);
+        sessionStorage.setItem('memberId', v.info.id);
+        sessionStorage.setItem('openId', v.info.openid);
+        sessionStorage.setItem('phone', v.info.tel);
 
         window.location.reload();
 
@@ -79,17 +80,17 @@ export function oAuth() {
 
 // 微信配置初始化
 export function wxInit(callback) {
-  const res = request(`${baseUrl}/Weixin/wx?url=${encodeURIComponent(window.location.href)}`, {
-    method: 'POST'
+  const res = request(`/Weixin/wx?url=${encodeURIComponent(window.location.href)}`, {
+    // method: 'POST'
   });
   res.then(v => {
-
+    console.log(JSON.stringify(v));
     wx.config({
       debug: false, // 开启调试模式, 调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-      appId: v.jsapi_appId, // 必填，公众号的唯一标识
-      timestamp: v.jsapi_timestamp, // 必填，生成签名的时间戳
-      nonceStr: v.jsapi_nonceStr, // 必填，生成签名的随机串
-      signature: v.jsapi_signature,// 必填，签名，见附录1
+      appId: v.info.jsapi_appId, // 必填，公众号的唯一标识
+      timestamp: v.info.jsapi_timestamp, // 必填，生成签名的时间戳
+      nonceStr: v.info.jsapi_nonceStr, // 必填，生成签名的随机串
+      signature: v.info.jsapi_signature,// 必填，签名，见附录1
       jsApiList: [
         'checkJsApi',
         'onMenuShareTimeline',
@@ -133,6 +134,7 @@ export function wxInit(callback) {
     wx.ready(function(){
       // config信息验证后会执行ready方法，所有接口调用都必须在config接口获得结果之后，config是一个客户端的异步操作，所以如果需要在页面加载时就调用相关接口，则须把相关接口放在ready函数中调用来确保正确执行。对于用户触发时才调用的接口，则可以直接调用，不需要放在ready函数中。
       if(typeof(callback) == "function"){
+        // alert('配置成功！');
         callback();
       };
 
@@ -143,7 +145,7 @@ export function wxInit(callback) {
 export function wxPay(orderId, callback) {
   const openId = localStorage.getItem('openId');
   console.log(openId);
-  const res = request(`${baseUrl}/Weixin/wx_Pay?url=${encodeURIComponent(window.location.href)}&openId=${openId}&orderId=${orderId}`);
+  const res = request(`/Weixin/wx_Pay?url=${encodeURIComponent(window.location.href)}&openId=${openId}&orderId=${orderId}`);
   res.then(v => {
     wx.chooseWXPay({
       timestamp: v.jsapi_timestamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
@@ -167,7 +169,7 @@ export function wxPay(orderId, callback) {
 
 export function wxPay2(orderId, callback) {
   const openId = localStorage.getItem('openId');
-  const res = request(`${baseUrl}/Weixin/wx_Pay2?url=${encodeURIComponent(window.location.href)}&openId=${openId}&orderId=${orderId}`);
+  const res = request(`/Weixin/wx_Pay2?url=${encodeURIComponent(window.location.href)}&openId=${openId}&orderId=${orderId}`);
   res.then(v => {
     wx.chooseWXPay({
       timestamp: v.jsapi_timestamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
@@ -239,13 +241,15 @@ export function wxUploadImage(callback) {
 }
 
 export function wxScanQRCodes(callback) {
-  wx.checkJsApi({
-    jsApiList: ['scanQRCode'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
-    success: function(res) {
+
+  // wx.checkJsApi({
+  //   jsApiList: ['scanQRCode'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
+  //   success: function(res) {
       // 以键值对的形式返回，可用的api值true，不可用为false
       // 如：{"checkResult":{"chooseImage":true},"errMsg":"checkJsApi:ok"}
       // alert(res.checkResult.scanQRCode);
-      if(res.checkResult.scanQRCode){
+  //     if(res.checkResult.scanQRCode){
+
         wx.scanQRCode({
           needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
           scanType: ["qrCode"], // 可以指定扫二维码还是一维码，默认二者都有
@@ -256,9 +260,10 @@ export function wxScanQRCodes(callback) {
             }
           }
         });
-      }
-    }
-  });
+
+    //   }
+  //   }
+  // });
 }
 
 // 预览图片接口
