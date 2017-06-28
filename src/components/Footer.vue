@@ -1,6 +1,6 @@
 <template>
     <yd-tabbar :fixed="true">
-        <yd-tabbar-item title="首页" link="/app/home" :active="tabState==tabData[0]" @click.native="tabState=tabData[0]">
+        <yd-tabbar-item title="首页" link="/app/uofile" :active="tabState==tabData[0]" @click.native="tabState=tabData[0]">
             <yd-icon name="home" slot="icon" size="0.54rem"></yd-icon>
         </yd-tabbar-item>
         <yd-tabbar-item title="组件" link="/app/news" :active="tabState==tabData[1]" @click.native="tabState=tabData[1]">
