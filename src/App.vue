@@ -41,10 +41,6 @@
     align-items: center;
     flex-direction: column;
     padding-bottom: 1rem;
-    img{
-      width: 2rem;
-      height: 2rem;
-    }
     .intro{
       font-size: 0.30rem;
     }

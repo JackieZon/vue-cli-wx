@@ -39,11 +39,11 @@
         },
         methods:{
             openQRCodes(){
-                wxInit(()=>{
+                wxInit(function(){
                     wxScanQRCodes((res)=>{
                         alert(res);
                     })
-                })
+                });
             }
         }
     }
