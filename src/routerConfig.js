@@ -2,6 +2,7 @@ import App from './App.vue'
 import Home from './pages/Home.vue'
 import News from './pages/News.vue'
 import My from './pages/My.vue'
+import UpFile from './pages/UpFile.vue'
 
 export default[
   {
@@ -19,6 +20,10 @@ export default[
       {
         path:'my',
         component: My
+      },
+      {
+        path:'uofile',
+        component: UpFile
       }
     ]
   },
