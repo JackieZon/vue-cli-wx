@@ -186,8 +186,7 @@ export function wxPay2(orderId, callback) {
         callback();
       },
       cancel: function (res) {
-        alert('支付取消'
-        );
+        alert('支付取消');
         callback();
       }
     });

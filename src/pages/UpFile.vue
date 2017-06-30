@@ -1,27 +1,39 @@
-{<template>
+<template>
     <div class="file">
-        <input v-on:change="changeFile" type="file" multiple ref="fileBtn">
-        <hr class="padding10">
-        <!--<img src="data:image/gif;base64,R0lGODlhEAAOALMAAOazToeHh0tLS/7LZv/0jvb29t/f3//Ub//ge8WSLf/rhf/3kdbW1mxsbP//mf///yH5BAAAAAAALAAAAAAQAA4AAARe8L1Ekyky67QZ1hLnjM5UUde0ECwLJoExKcppV0aCcGCmTIHEIUEqjgaORCMxIC6e0CcguWw6aFjsVMkkIr7g77ZKPJjPZqIyd7sJAgVGoEGv2xsBxqNgYPj/gAwXEQA7" alt="">-->
-        <div>
-            <!--<img v-for="item in dataURL" :src="item" alt="">-->
+        <div class="fileBox">
+            <div class="fileBoxs">
+                <input class="fileBtn" v-on:change="changeFile" type="file" ref="fileBtn" >
+            </div>
         </div>
-        <progress v-if="valueStatus" :value="valueStatus" :max="max" class="progress"> ^_^ </progress>
+        <div class="file-info">
+            <div class="item">文件名&nbsp;：{{files?files.name:'无'}}</div>
+            <div class="item">文件大小：{{files?(Math.round(files.size / (1024 * 1024) * 100) / 100)+'M':'无'}}</div>
+            <div class="item">文件类型：{{files?'.'+files.name.split('.')[1]:'无'}}</div>
+        </div>
+        <progress  :value="valueStatus" :max="max" class="progress"> ^_^ </progress>
         <div >{{valueStatus+'%'}}</div>
+
+        <yd-button size="large" type="primary">支付并打印</yd-button>
+        <yd-button size="large" @click.native="clearData" type="hollow">清除</yd-button>
     </div>
 </template>
 <script>
+    import Vue from 'vue'
+    import {postFormData} from './../../servers/home.js'
+    import {Button, ButtonGroup} from 'vue-ydui/dist/lib.rem/button';
+    Vue.component(Button.name, Button);
+    Vue.component(ButtonGroup.name, ButtonGroup);
     export default {
         data(){
             return {
-                msg:'我是文件',
+                files:'',
                 valueStatus:0,
                 max:100,
                 dataURL:[]
             }
         },
         created(){
-
+            console.log(postFormData)
         },
         watch:{
             valueStatus(val, oldVal){
@@ -30,39 +42,34 @@
         methods:{
             changeFile(){
                 var t_data = this;
-                console.log(this.$refs.fileBtn.files);
+                this.files = this.$refs.fileBtn.files[0];
 
-                var reader = new FileReader();
-                var count = 0;
+                var formData = new FormData();
+                formData.append("userfile", this.files);
 
-                reader.onprogress = function(loadeds){
-                    count += 1;
-                    
-                    t_data.valueStatus = Math.round((loadeds.loaded / loadeds.total)*100)
-                    console.log(t_data.valueStatus);
-                    
-                }
+                var res = postFormData(formData)
 
-                reader.onload = function() {
+                // console.log(this.$refs.fileBtn.files);
 
-                    var dataURL = reader.result;
+                // var reader = new FileReader();
+                // reader.onprogress = function(loadeds){
+                //     t_data.valueStatus = Math.round((loadeds.loaded / loadeds.total)*100)
+                // }
+                // reader.onload = function() {
+                //     var dataURL = reader.result;
+                //     t_data.dataURL.push(dataURL);
+                // };
 
-                    console.log('base 格式出来了')
-
-                    // console.log(dataURL);
-                    // t_data.dataURL.push(dataURL);
-
-                    
-                };
-
-                // for(var j=0; j < this.$refs.fileBtn.files.length; j++){
-                    reader.readAsDataURL(this.$refs.fileBtn.files[0]);
-                    // console.log(j);
+                // for(var j=0; j < this.files.length; j++){
+                // reader.readAsDataURL(this.files);
                 // }
 
                 // reader.readAsDataURL(this.$refs.fileBtn.files[0]); // Base 64 格式数据
-                // reader.readAsText(this.$refs.fileBtn.files[0]);    // 文本格式形式
+                // reader.readAsText(this.files);    // 文本格式形式
 
+            },
+            clearData(){
+                this.files = '';
             }
         }
     }
@@ -86,5 +93,50 @@
             background:#0366d6;
         }
     }
+    .fileBox{
+        watch:100%;
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        .fileBoxs{
+            width:2rem;
+            height:2rem;
+        }
+    }
+    .fileBtn{
+        background: url(./../assets/img/add-icon.png) 50% 50% no-repeat #fff;
+        background-size:60%;
+        width:100%;
+        height:100%;
+        border: 1px solid #a0b3d6;
+        color: #34538b;
+    }
+    ::-webkit-file-upload-button {
+        display:none;
+        padding: .4em;
+        line-height: 30px;
+        border: 1px solid #a0b3d6;
+        background: #f0f3f9;
+        color: #34538b;
+    }
+    .btn-block{
+        margin-top:0.2rem;
+    }
+    .file-info{
+        box-sizing: border-box;
+        padding: 0.5rem 0.3rem;
+        font-size:0.32rem;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        .item{
+            white-space: nowrap; 
+            text-overflow: ellipsis; 
+            -o-text-overflow: ellipsis; 
+            overflow: hidden;
+            text-align:left;
+
+        }
+    }
 }
-</style>}
+</style>

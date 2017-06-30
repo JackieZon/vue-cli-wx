@@ -3,7 +3,7 @@
         <Heads :name="'首页'"></Heads>
         <template>
             <yd-slider autoplay="5000">
-                <yd-slider-item v-for="item in bannerList">
+                <yd-slider-item v-for="item in bannerList" :key="item">
                     <div class="img-box">
                         <img :src="item">
                     </div>
