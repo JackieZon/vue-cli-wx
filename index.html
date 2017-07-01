@@ -2,7 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
+    <meta name="screen-orientation" content="portrait"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="full-screen" content="yes">
+    <meta name="x5-fullscreen" content="true">
     <!-- 使用rem，需另外引入ydui.flexible.js自适应类库 -->
     <link rel="stylesheet" href="https://unpkg.com/vue-ydui/dist/ydui.rem.css">
     <script src="https://unpkg.com/vue-ydui/dist/ydui.flexible.js"></script>
@@ -17,5 +22,6 @@
       <router-view></router-view>
     </div>
     <script src="./dist/build.js"></script>
+	<script src="./dist/vconsole.min.js"></script>
   </body>
 </html>

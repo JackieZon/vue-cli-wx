@@ -37,7 +37,7 @@
     font-size: 0.18rem;
     text-align: center;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     flex-direction: column;
     padding-bottom: 1rem;

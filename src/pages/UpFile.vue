@@ -1,25 +1,44 @@
 <template>
-    <div class="file">
-        <div class="fileBox">
-            <div class="fileBoxs">
-                <input class="fileBtn" v-on:change="changeFile" type="file" ref="fileBtn" >
+    <div class="main">
+        <Heads :name="'我要打印'"></Heads>
+        <div class="file">
+            <div class="fileInfo">
+                <div class="fileBox">
+                    <div class="fileBoxs">
+                        <input class="fileBtn" v-on:change="changeFile" type="file" ref="fileBtn" >
+                    </div>
+                </div>
+                <progress  :value="valueStatus" :max="max" class="progress"> ^_^ </progress>
+                <div >{{valueStatus+'%'}}</div>
+                <div class="file-info">
+                    <div class="item">文件名&nbsp;：{{files?files.name:'无'}}</div>
+                    <div class="item">文件大小：{{files?(Math.round(files.size / (1024 * 1024) * 100) / 100)+'M':'无'}}</div>
+                    <div class="item">文件类型：{{files?'.'+files.name.split('.')[1]:'无'}}</div>
+                </div>
+            </div>
+            <yd-cell-group title="打印纸张及颜色">
+                <yd-cell-item type="radio">
+                    <span slot="left">A4黑白(每张<span class="cash">0.5</span>元)</span>
+                    <input slot="right" type="radio" value="1" v-model="picked"/>
+                </yd-cell-item>
+
+                <yd-cell-item type="radio">
+                    <span slot="left">A4彩色(每张<span class="cash">3.0</span>元)</span>
+                    <input slot="right" type="radio" value="2" v-model="picked"/>
+                </yd-cell-item>
+            </yd-cell-group>
+            <div class="filePay">
+                <yd-button size="large" type="primary" @click.native="orderAdd">支付并打印</yd-button>
+                <yd-button size="large" @click.native="clearData" type="hollow">清除</yd-button>
             </div>
         </div>
-        <div class="file-info">
-            <div class="item">文件名&nbsp;：{{files?files.name:'无'}}</div>
-            <div class="item">文件大小：{{files?(Math.round(files.size / (1024 * 1024) * 100) / 100)+'M':'无'}}</div>
-            <div class="item">文件类型：{{files?'.'+files.name.split('.')[1]:'无'}}</div>
-        </div>
-        <progress  :value="valueStatus" :max="max" class="progress"> ^_^ </progress>
-        <div >{{valueStatus+'%'}}</div>
-
-        <yd-button size="large" type="primary">支付并打印</yd-button>
-        <yd-button size="large" @click.native="clearData" type="hollow">清除</yd-button>
     </div>
 </template>
 <script>
+    import Heads from './../components/Head.vue'
     import Vue from 'vue'
-    import {postFormData} from './../../servers/home.js'
+    import { uploadFile, orderAdd } from './../../servers/home.js'
+    import { wxPay, wxInit } from './../../utils/weixin.js'
     import {Button, ButtonGroup} from 'vue-ydui/dist/lib.rem/button';
     Vue.component(Button.name, Button);
     Vue.component(ButtonGroup.name, ButtonGroup);
@@ -29,14 +48,25 @@
                 files:'',
                 valueStatus:0,
                 max:100,
-                dataURL:[]
+                dataURL:[],
+                picked:1,
+                result:{}
             }
         },
+        components:{
+            Heads
+        },
         created(){
-            console.log(postFormData)
+            
+        },
+        mounted(){
+
         },
         watch:{
             valueStatus(val, oldVal){
+            },
+            picked(val,oldVal){
+                console.log(val);
             }
         },
         methods:{
@@ -45,37 +75,67 @@
                 this.files = this.$refs.fileBtn.files[0];
 
                 var formData = new FormData();
-                formData.append("userfile", this.files);
+                formData.append("file", this.files);
 
-                var res = postFormData(formData)
-
-                // console.log(this.$refs.fileBtn.files);
-
-                // var reader = new FileReader();
-                // reader.onprogress = function(loadeds){
-                //     t_data.valueStatus = Math.round((loadeds.loaded / loadeds.total)*100)
-                // }
-                // reader.onload = function() {
-                //     var dataURL = reader.result;
-                //     t_data.dataURL.push(dataURL);
-                // };
-
-                // for(var j=0; j < this.files.length; j++){
-                // reader.readAsDataURL(this.files);
-                // }
-
-                // reader.readAsDataURL(this.$refs.fileBtn.files[0]); // Base 64 格式数据
-                // reader.readAsText(this.files);    // 文本格式形式
-
+                var res = uploadFile(formData,function(res){
+                    console.log('上传进度');
+                    console.log(res);
+                    t_data.valueStatus = Math.round((res.loaded / res.total)*100)
+                });
+                res.then((s)=>{
+                    console.log(s);
+                    t_data.result = s;
+                })
             },
             clearData(){
+                this.result = {};
                 this.files = '';
+                this.valueStatus = 0;
+            },
+            orderAdd(){
+
+                const t_data = this;
+                const url = '/Orders/OrderAdd';
+                const memberId = sessionStorage.getItem('memberId');
+                const res = orderAdd(0,memberId,0,t_data.result.filePage,t_data.picked,t_data.result.filePath);
+                res.then((cashRes)=>{
+
+                    alert(JSON.stringify(cashRes));
+                    console.log(JSON.stringify(cashRes));
+
+                    wxInit(()=>{
+                        wxPay(cashRes.info.orderId,(payRes)=>{
+
+                            alert(JSON.stringify(payRes));
+
+                        })
+                    });
+                    
+                })
             }
         }
     }
 </script>
 <style lang="scss">
+.main{
+    width:100%;
+    box-sizing: border-box;
+    padding-bottom: 1.8rem;
+}
+.cash{
+    font-size: 0.46rem;
+    color:#FF4500;
+}
 .file{
+    width:100%;
+    .fileInfo{
+        padding: 1rem .3rem .3rem;
+        background:#fff;
+        margin-bottom: 0.1rem;
+    }
+    .filePay{
+        padding: 0 0.3rem;
+    }
     img{
         display: block;
         margin: 0 auto;
@@ -85,9 +145,8 @@
     .padding10{
         margin: 1rem 0;
     }
-    padding: 0.3rem;
-    width:100%;
     .progress{
+        margin-top: 0.5rem;
         width:100%;
         ::-prefix-progress-value{
             background:#0366d6;
@@ -99,8 +158,9 @@
         justify-content: center;
         align-items: center;
         .fileBoxs{
-            width:2rem;
-            height:2rem;
+            display: flex;
+            width:1.5rem;
+            height:1.5rem;
         }
     }
     .fileBtn{
@@ -124,7 +184,7 @@
     }
     .file-info{
         box-sizing: border-box;
-        padding: 0.5rem 0.3rem;
+        padding: 0.3rem 0rem;
         font-size:0.32rem;
         display: flex;
         justify-content: center;

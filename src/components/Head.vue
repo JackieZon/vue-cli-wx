@@ -1,6 +1,7 @@
 <template>
     <div class="head">
         <header class="m-navbar">
+            <slot></slot>
             <div class="navbar-center">
                 <span class="navbar-title">{{name?name:'Navber'}}</span>
             </div>
@@ -8,6 +9,7 @@
     </div>
 </template>
 <script>
+
     export default {
         props:['name'],
         data(){
@@ -19,7 +21,8 @@
         },
         methods:{
         },
-        components:{}
+        components:{},
+        
     }
 </script>
 <style lang="scss">

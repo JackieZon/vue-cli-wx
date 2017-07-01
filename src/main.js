@@ -10,11 +10,11 @@ import routes from './routerConfig.js'
 
 import {oAuth,wxInit} from './../utils/weixin.js'
 
-// oAuth();
-// wxInit();
+oAuth();
+wxInit();
 
-Vue.use(YDUI)
-Vue.use(VueRouter)
+Vue.use(YDUI);
+Vue.use(VueRouter);
 
 const router = new VueRouter({
   routes

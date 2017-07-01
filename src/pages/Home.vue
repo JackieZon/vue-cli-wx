@@ -1,6 +1,6 @@
 <template>
     <div class="home">
-        <Heads :name="'首页'"></Heads>
+        <Heads :name="msg"><div>jackieZon</div></Heads>
         <template>
             <yd-slider autoplay="5000">
                 <yd-slider-item v-for="item in bannerList" :key="item">
@@ -23,7 +23,7 @@
     export default {
         data(){
             return {
-                msg:'我是首页',
+                msg:'首页',
                 bannerList:[
                     'http://bpic.588ku.com/back_pic/02/64/88/4957863e5539451.jpg',
                     'http://bpic.588ku.com/back_pic/00/02/44/655617a0ebf40b2.jpg',
